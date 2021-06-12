@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pymongo
+python-dateutil
+python-dotenv
+pandas 
+python-multipart
+fuzzywuzzy[speedup]
+nltk
