@@ -5,7 +5,7 @@ FastAPI app definition, initialization and definition of routes
 # # Installed # #
 import uvicorn
 from subprocess import Popen
-from fastapi import FastAPI
+from fastapi import FastAPI, File, UploadFile
 from fastapi import status as statuscode
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
@@ -13,7 +13,7 @@ from typing import Optional
 # # Package # #
 from .models import *
 from .exceptions import *
-from .repositories import DiseaseRepository
+from .repositories import DiseaseRepository, VerificationRepository, MedicalEventRepository
 from .middlewares import request_handler
 from .settings import api_settings as settings
 
@@ -44,3 +44,19 @@ async def startup_event():
 )
 def _get_top_10_disease(symptoms: str):
     return DiseaseRepository.getTop10Disease(symptoms)
+
+@app.post(
+    "/aadharVerification",
+    status_code=statuscode.HTTP_201_CREATED,
+    tags=["Files"]
+    )
+async def _aadhar_verification(aadhar_number: str, aadhar_card: UploadFile = File(...)):
+    return VerificationRepository.aadharVerification(aadhar_card, aadhar_number)
+
+@app.post(
+    "/prescription",
+    status_code=statuscode.HTTP_201_CREATED,
+    tags=["Files"]
+    )
+async def _prescription_extraction(prescription: UploadFile = File(...)):
+    return MedicalEventRepository.prescriptionExtraction(prescription)
