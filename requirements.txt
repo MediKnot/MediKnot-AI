@@ -10,3 +10,4 @@ nltk
 scipy
 pytesseract
 tesseract
+opencv-python
