@@ -23,7 +23,7 @@ import nltk
 from fuzzywuzzy import process
 from nltk.tokenize import word_tokenize 
 
-#pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
 __all__ = ("get_time", "get_uuid", "ocr_extraction", "aadhar_card_info")
 
@@ -184,7 +184,7 @@ def aadhar_card_info(info):
             current += 1
         elif i == n-aadhar_len:
             current += 1
-        if current == 16:
+        if current >= 14:
             aadhaar = 1
             start = i
             break
