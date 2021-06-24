@@ -13,7 +13,7 @@ from typing import Optional
 # # Package # #
 from .models import *
 from .exceptions import *
-from .repositories import DiseaseRepository, VerificationRepository, MedicalEventRepository
+from .repositories import DiseaseRepository, VerificationRepository, MedicalEventRepository, DialogFlowRepository
 from .middlewares import request_handler
 from .settings import api_settings as settings
 
@@ -60,3 +60,11 @@ async def _aadhar_verification(aadhar_number: str, aadhar_card: UploadFile = Fil
     )
 async def _prescription_extraction(prescription: UploadFile = File(...)):
     return MedicalEventRepository.prescriptionExtraction(prescription)
+
+
+@app.post(
+    "/chat",
+    tags=["DialogFlow"]
+    )
+async def _get_response_for_query(text: str):
+    return DialogFlowRepository.chat(text)

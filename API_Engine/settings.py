@@ -5,7 +5,7 @@ Settings loaders using Pydantic BaseSettings classes (load from environment vari
 # # Installed # #
 import pydantic
 
-__all__ = ("api_settings", "mysql_settings")
+__all__ = ("api_settings", "mysql_settings", "dialogflow_settings")
 
 
 class BaseSettings(pydantic.BaseSettings):
@@ -32,6 +32,13 @@ class MySQLSettings(BaseSettings):
     class Config(BaseSettings.Config):
         env_prefix = "MYSQL_"
 
+class DialogFlowSettings(BaseSettings):
+    DIALOGFLOW_PROJECT_ID : str = "docbot-kopk"
+    
+    class Config(BaseSettings.Config):
+        env_prefix = "DIALOGFLOW_"
+
 
 api_settings = APISettings()
 mysql_settings = MySQLSettings()
+dialogflow_settings = DialogFlowSettings()
