@@ -13,7 +13,7 @@ from google.protobuf.json_format import MessageToDict
 # # Package # #
 from .models import *
 from .exceptions import *
-from .utils import get_time, get_uuid, diseaseToSymptom, ocr_extraction, aadhar_card_info
+from .utils import get_time, get_uuid, diseaseToSymptom, ocr_extraction, aadhar_card_info, prescription_info
 from .settings import dialogflow_settings
 
 __all__ = ("DiseaseRepository", "VerificationRepository", "MedicalEventRepository", "DialogFlowRepository")
@@ -32,8 +32,7 @@ class DiseaseRepository:
 class VerificationRepository:
     @staticmethod
     def aadharVerification(aadhar_card, aadhar_number: str):
-        extracted_info = ocr_extraction(aadhar_card)
-        aadhar_number_extracted = aadhar_card_info(extracted_info)
+        aadhar_number_extracted = aadhar_card_info(aadhar_card)
         if aadhar_number_extracted == "Not found!":
             return JSONResponse(
                 content = {
@@ -52,11 +51,9 @@ class VerificationRepository:
 class MedicalEventRepository:
     @staticmethod
     def prescriptionExtraction(prescription):
-        extracted_info = ocr_extraction(prescription).split("string_separation_between_two_extraction")
+        extracted_info = prescription_info(prescription)
         return JSONResponse(
-            content = {
-                "message": extracted_info
-            }
+            content = extracted_info
         )
 
 class DialogFlowRepository:

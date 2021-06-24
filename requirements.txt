@@ -13,3 +13,4 @@ tesseract
 opencv-python
 dialogflow
 google
+spacy
