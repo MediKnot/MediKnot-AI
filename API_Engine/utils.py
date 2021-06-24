@@ -31,7 +31,7 @@ import tabula
 nlp = spacy.load("en_core_web_sm")
 
 stop_words = nlp.Defaults.stop_words
-pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
+#pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
 __all__ = ("get_time", "get_uuid", "ocr_extraction", "aadhar_card_info", 'prescription_info', 'report_info')
 
