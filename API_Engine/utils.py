@@ -11,10 +11,13 @@ from typing import Union
 from operator import itemgetter
 from PIL import Image as im
 import io
+import json
 import numpy as np
 
 # # Installed # #
 import pandas as pd
+import requests
+from PyPDF2 import PdfFileReader
 import cv2
 import pytesseract
 from scipy.ndimage import interpolation as inter
@@ -24,13 +27,13 @@ from fuzzywuzzy import process
 from nltk.tokenize import word_tokenize 
 import spacy
 from string import punctuation
-
+import tabula
 nlp = spacy.load("en_core_web_sm")
 
 stop_words = nlp.Defaults.stop_words
 pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
-__all__ = ("get_time", "get_uuid", "ocr_extraction", "aadhar_card_info", 'prescription_info')
+__all__ = ("get_time", "get_uuid", "ocr_extraction", "aadhar_card_info", 'prescription_info', 'report_info')
 
 def get_time(seconds_precision=True) -> Union[int, float]:
     """Returns the current time as Unix/Epoch timestamp, seconds precision by default"""
@@ -181,12 +184,8 @@ def aadhar_card_info(aadhar_card):
         aadhar_number = ''.join(info[start : start+aadhar_len].split())
         return aadhar_number
     return "Not found!"
-
-def prescription_info(prescription):
-    extracted_info = ocr_extraction(prescription).split("string_separation_between_two_extraction")
-    extracted_info = max(extracted_info, key=len)
-
-    info = keyword_extraction(extracted_info)
+def get_useful_info(info):
+    info = keyword_extraction(info)
     diseases = pd.read_json('./Data/disease_data.json')
     disease_name = diseases['Name']
     
@@ -199,5 +198,35 @@ def prescription_info(prescription):
     return {
         'diseases' : disease_found,
         'medicine' : medicine_found,
-        'extracted_info': extracted_info
+        'extracted_info': info
+    }
+
+def prescription_info(prescription):
+    extracted_info = ocr_extraction(prescription).split("string_separation_between_two_extraction")
+    extracted_info = max(extracted_info, key=len)
+    return get_useful_info(extracted_info)
+    
+
+def report_info(reportUrl):
+    
+    dfs = tabula.read_pdf(reportUrl, stream=True, pages = 'all')
+    print(len(dfs))
+    report = pd.concat(dfs, ignore_index=True)
+    print(report)
+    r = requests.get(reportUrl)
+    f = io.BytesIO(r.content)
+
+    reader = PdfFileReader(f)
+
+    text = ""
+    for i in range(reader.numPages):
+        text += reader.getPage(i).extractText() + " "
+    
+    info = ' '.join(list(set(text.split())))
+    data =  diseaseToSymptom(info)
+    diseases = [{"name" :d['name'], "score" : d["score"]} for d in data]
+        
+    return {
+        "data": json.loads(report.to_json(orient='records')),
+        "disease": diseases
     }

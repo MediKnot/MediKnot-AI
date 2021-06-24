@@ -13,7 +13,7 @@ from google.protobuf.json_format import MessageToDict
 # # Package # #
 from .models import *
 from .exceptions import *
-from .utils import get_time, get_uuid, diseaseToSymptom, ocr_extraction, aadhar_card_info, prescription_info
+from .utils import get_time, get_uuid, diseaseToSymptom, ocr_extraction, aadhar_card_info, report_info, prescription_info
 from .settings import dialogflow_settings
 
 __all__ = ("DiseaseRepository", "VerificationRepository", "MedicalEventRepository", "DialogFlowRepository")
@@ -52,6 +52,12 @@ class MedicalEventRepository:
     @staticmethod
     def prescriptionExtraction(prescription):
         extracted_info = prescription_info(prescription)
+        return JSONResponse(
+            content = extracted_info
+        )
+    @staticmethod
+    def reportExtraction(reportUrl):
+        extracted_info = report_info(reportUrl)
         return JSONResponse(
             content = extracted_info
         )

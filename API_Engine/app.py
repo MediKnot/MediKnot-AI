@@ -63,6 +63,15 @@ async def _prescription_extraction(prescription: UploadFile = File(...)):
 
 
 @app.post(
+    "/report",
+    status_code=statuscode.HTTP_201_CREATED,
+    tags=["Files"]
+    )
+async def _report_extraction(reportUrl: str):
+    return MedicalEventRepository.reportExtraction(reportUrl)
+
+
+@app.post(
     "/chat",
     tags=["DialogFlow"]
     )
